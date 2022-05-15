@@ -1,12 +1,18 @@
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const { globalErrorHandler } = require('./controllers/errorsController');
 
 // Controllers
 const { globalErrorHandler } = require('./controllers/errors.controller');
 
 // Routers
 const { usersRouter } = require('./routes/users.routes');
+const { usersRouter } = require('./routes/usersRouters');
+const { orderRouter } = require('./routes/orders.routers');
+const { restaurantRouter } = require('./routes/restaurants.routes');
+const { mealRouter } = require('./routes/meals.routes');
+
 
 // Init express app
 const app = express();
