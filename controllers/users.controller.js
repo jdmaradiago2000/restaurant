@@ -6,23 +6,14 @@ const dotenv = require('dotenv');
 
 // Models
 const { User } = require('../models/user.model');
+const { Order } = require('../models/order.model');
+const { Meal } = require('../models/meal.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
 
 dotenv.config({ path: './config.env' });
-
-const getAllUsers = catchAsync(async (req, res, next) => {
-  // SELECT * FROM users;
-  const users = await User.findAll({
-    attributes: { exclude: ['password'] },
-  });
-
-  res.status(200).json({
-    users,
-  });
-});
 
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -42,45 +33,6 @@ const createUser = catchAsync(async (req, res, next) => {
   newUser.password = undefined;
 
   res.status(201).json({ newUser });
-});
-
-const getUserById = catchAsync(async (req, res, next) => {
-  const { user } = req;
-  // const { id } = req.params;
-
-  // SELECT * FROM users WHERE id = ?
-  // const user = await User.findOne({ where: { id } });
-
-  res.status(200).json({
-    user,
-  });
-});
-
-const updateUser = catchAsync(async (req, res, next) => {
-  const { user } = req;
-  // const { id } = req.params;
-  const { name } = req.body;
-
-  // await User.update({ name }, { where: { id } });
-
-  // const user = await User.findOne({ where: { id } });
-
-  await user.update({ name });
-
-  res.status(200).json({ status: 'success' });
-});
-
-const deleteUser = catchAsync(async (req, res, next) => {
-  const { user } = req;
-  // const { id } = req.params;
-
-  // DELETE FROM ...
-  // await user.destroy();
-  await user.update({ status: 'deleted' });
-
-  res.status(200).json({
-    status: 'success',
-  });
 });
 
 const login = catchAsync(async (req, res, next) => {
@@ -106,16 +58,68 @@ const login = catchAsync(async (req, res, next) => {
   res.status(200).json({ token, user });
 });
 
+const updateUser = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  // const { id } = req.params;
+  const { name, email } = req.body;
+
+  // await User.update({ name }, { where: { id } });
+
+  // const user = await User.findOne({ where: { id } });
+
+  await user.update({ name, email });
+
+  res.status(200).json({ status: 'success' });
+});
+
+const deleteUser = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  // const { id } = req.params;
+
+  // DELETE FROM ...
+  // await user.destroy();
+  await user.update({ status: 'deleted' });
+
+  res.status(200).json({
+    status: 'success',
+  });
+});
+
+const getAllOrders = catchAsync(async (req, res, next) => {
+  // SELECT * FROM users;
+  const users = await User.findAll({
+    attributes: { exclude: ['password'] },
+    include: [{ model: Order }],
+  });
+
+  res.status(200).json({
+    users,
+  });
+});
+
+const getOrderById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const order = await Order.findOne({
+    where: { id },
+    include: [{ model: Meal }],
+  });
+
+  res.status(200).json({
+    user,
+  });
+});
+
 const checkToken = catchAsync(async (req, res, next) => {
   res.status(200).json({ user: req.sessionUser });
 });
 
 module.exports = {
-  getAllUsers,
   createUser,
-  getUserById,
-  updateUser,
-  deleteUser,
   login,
+  updateUser,
+  getAllOrders,
+  getOrderById,
+  deleteUser,
   checkToken,
 };
