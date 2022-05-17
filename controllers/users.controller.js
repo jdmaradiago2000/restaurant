@@ -106,7 +106,7 @@ const getOrderById = catchAsync(async (req, res, next) => {
   });
 
   res.status(200).json({
-    user,
+    order,
   });
 });
 
@@ -118,8 +118,8 @@ module.exports = {
   createUser,
   login,
   updateUser,
+  deleteUser,
   getAllOrders,
   getOrderById,
-  deleteUser,
   checkToken,
 };

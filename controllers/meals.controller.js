@@ -12,7 +12,7 @@ const getAllMeals = catchAsync(async (req, res, next) => {
   res.status(200).json({ meals });
 });
 
-const createMeals = catchAsync(async (req, res, next) => {
+const createMeal = catchAsync(async (req, res, next) => {
   const { name, price } = req.body;
   const { restaurantId } = req.params;
 
@@ -21,29 +21,40 @@ const createMeals = catchAsync(async (req, res, next) => {
   res.status(201).json({ newMeal });
 });
 
-const getMealtById = catchAsync(async (req, res, next) => {
+const getMealById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const post = await Post.findOne({ where: { id } });
+  const meal = await Meal.findOne({ where: { id, status: 'active' } });
 
-  res.status(200).json({
-    post,
-  });
+  res.status(200).json({ meal });
 });
 
-const updateMealsById = catchAsync(async (req, res, next) => {
+const updateMealById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { name, price } = req.body;
+
+  const meal = await Meal.findOne({ where: { id } });
+
+  await meal.update({ name, price });
+
   res.status(200).json({ status: 'success' });
 });
 
-const deleteMeals = catchAsync(async (req, res, next) => {
+const deleteMeal = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const meal = await Meal.findOne({ where: { id } });
+
+  await meal.update({ status: 'deleted' });
+
   res.status(200).json({
     status: 'success',
   });
 });
 
 module.exports = {
-  createMeals,
+  createMeal,
   getAllMeals,
-  getMealtById,
-  updateMealsById,
-  deleteMeals,
+  getMealById,
+  updateMealById,
+  deleteMeal,
 };

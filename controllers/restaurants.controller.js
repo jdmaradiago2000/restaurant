@@ -5,16 +5,8 @@ const { Review } = require('../models/review.model');
 //Utils
 const { catchAsync } = require('../utils/catchAsync');
 
-const getAllRestaurant = catchAsync(async (req, res, next) => {
-  const restaurants = await Restaurant.findAll({});
-
-  res.status(200).json({
-    restaurants,
-  });
-});
-
-const getAlActiveRestaurants = catchAsync(async (req, res, next) => {
-  const restaurants = await Restaurant.findAll({ where: { status: active } });
+const getAllActiveRestaurants = catchAsync(async (req, res, next) => {
+  const restaurants = await Restaurant.findAll({ where: { status: 'active' } });
 
   res.status(200).json({
     restaurants,
@@ -22,14 +14,13 @@ const getAlActiveRestaurants = catchAsync(async (req, res, next) => {
 });
 
 const createRestaurant = catchAsync(async (req, res, next) => {
-  const { name, adress, rating, status } = req.body;
+  const { name, adress, rating } = req.body;
 
   // INSERT INTO ...
   const newRestaurant = await Restaurant.create({
     name,
     adress,
     rating,
-    status,
   });
 
   res.status(201).json({ newRestaurant });
@@ -62,7 +53,7 @@ const deleteRestaurant = catchAsync(async (req, res, next) => {
   });
 });
 
-const createReviewsByRestaurantId = catchAsync(async (req, res, next) => {
+const createReviewByRestaurantId = catchAsync(async (req, res, next) => {
   const { comment, rating } = req.body;
   const { restaurantId } = req.params;
   const { sessionUser } = req;
@@ -93,13 +84,12 @@ const deleteReviewByRestaurantId = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
-  getAllRestaurant,
-  getAlActiveRestaurants,
+  getAllActiveRestaurants,
   createRestaurant,
   getRestaurantById,
   updateRestaurant,
   deleteRestaurant,
-  createReviewsByRestaurantId,
+  createReviewByRestaurantId,
   updateReviewByRestaurantId,
   deleteReviewByRestaurantId,
 };

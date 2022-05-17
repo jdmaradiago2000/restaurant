@@ -1,7 +1,7 @@
 const { app } = require('./app');
 
 // Models
-const { initModels } = require('./models/initModels');
+const { initModels } = require('./models/init.model');
 
 // Utils
 const { db } = require('./utils/database');

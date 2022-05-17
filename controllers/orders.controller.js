@@ -1,21 +1,25 @@
 // Models
-const { User } = require('../models/usersModels');
+const { User } = require('../models/user.model');
 const { Order } = require('../models/order.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
 
-
 const createOrder = catchAsync(async (req, res, next) => {
-  const { title, content } = req.body;
+  const { quantity, mealId } = req.body;
   const { sessionUser } = req;
 
-  const newOrder = await Order.create({ title, content, userId: sessionUser.id });
+  //let total = quantity * mealId;
+
+  const newOrder = await Order.create({
+    quantity,
+    mealId,
+    //total,
+    userId: sessionUser.id,
+  });
 
   res.status(201).json({ newOrder });
 });
-
-
 
 const updateOrder = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -40,9 +44,7 @@ const deleteOrder = catchAsync(async (req, res, next) => {
   });
 });
 
-;
-
-const getMyOrder = catchAsync(async (req, res, next) => {
+const getAllOrders = catchAsync(async (req, res, next) => {
   const { sessionUser } = req;
 
   const orders = await Order.findAll({
@@ -59,8 +61,8 @@ const getMyOrder = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
- createOrder,
- getMyOrder,
- updateOrder,
- deleteOrder,
-}
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  getAllOrders,
+};

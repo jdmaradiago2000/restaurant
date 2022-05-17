@@ -1,30 +1,26 @@
 const express = require('express');
 
-const { mealsExists } = require('../middlewares/mealsMiddlewares');
-const { protectToken } = require('../middlewares/usersMiddlewares');
+//Middlewares
+const { protectToken } = require('../middlewares/users.middlewares');
+const { protectAdmin } = require('../middlewares/users.middlewares');
 
-
+//Controllers
 const {
-    createMeals,
-    getAllMeals,
-  getMealstById,
-  updateMealsById,
-  deleteMeals,
-} = require('../controllers/mealsController');
+  createMeal,
+  getAllMeals,
+  getMealById,
+  updateMealById,
+  deleteMeal,
+} = require('../controllers/meals.controller');
 
 const router = express.Router();
+router.post('/:restaurantId', createMeal);
+router.get('/', getAllMeals);
+
 router.use(protectToken);
 
-router.route('/').get(getAllMeals)
+router.get('/:id', getMealById);
+router.patch('/:id', protectAdmin, updateMealById);
+router.delete('/:id', protectAdmin, deleteMeal);
 
-
-
-router
-  .use('/:id', mealsExists)
-  .route('/:id')
-  .post(createMeals)
-  .get(getMealstById)
-  .patch(updateMealsById)
-  .delete(deleteMeals);
-
-module.exports = { mealRouter: router };
+module.exports = { mealsRouter: router };

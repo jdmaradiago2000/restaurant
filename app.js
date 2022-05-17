@@ -1,18 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const { globalErrorHandler } = require('./controllers/errorsController');
 
 // Controllers
 const { globalErrorHandler } = require('./controllers/errors.controller');
 
 // Routers
 const { usersRouter } = require('./routes/users.routes');
-const { usersRouter } = require('./routes/usersRouters');
-const { orderRouter } = require('./routes/orders.routers');
-const { restaurantRouter } = require('./routes/restaurants.routes');
-const { mealRouter } = require('./routes/meals.routes');
-
+const { ordersRouter } = require('./routes/orders.routes');
+const { restaurantsRouter } = require('./routes/restaurants.routes');
+const { mealsRouter } = require('./routes/meals.routes');
 
 // Init express app
 const app = express();
@@ -34,6 +31,9 @@ app.use(limiter);
 
 // Endpoints
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/orders', ordersRouter);
+app.use('/api/v1/restaurants', restaurantsRouter);
+app.use('/api/v1/meals', mealsRouter);
 
 // Global error handler
 app.use('*', globalErrorHandler);
