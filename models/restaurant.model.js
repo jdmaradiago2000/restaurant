@@ -13,7 +13,7 @@ const Restaurant = db.define('restaurant', {
     allowNull: false,
   },
 
-  adress: {
+  address: {
     type: DataTypes.STRING,
     allowNull: false,
   },

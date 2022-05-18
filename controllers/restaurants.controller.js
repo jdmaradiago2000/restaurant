@@ -1,4 +1,5 @@
 //Models
+const { User } = require('../models/user.model');
 const { Restaurant } = require('../models/restaurant.model');
 const { Review } = require('../models/review.model');
 
@@ -6,7 +7,16 @@ const { Review } = require('../models/review.model');
 const { catchAsync } = require('../utils/catchAsync');
 
 const getAllActiveRestaurants = catchAsync(async (req, res, next) => {
-  const restaurants = await Restaurant.findAll({ where: { status: 'active' } });
+  const restaurants = await Restaurant.findAll({
+    where: { status: 'active' },
+    include: [
+      {
+        model: Review,
+        attributes: ['id', 'comment', 'rating', 'status'],
+        include: [{ model: User }],
+      },
+    ],
+  });
 
   res.status(200).json({
     restaurants,
@@ -14,12 +24,12 @@ const getAllActiveRestaurants = catchAsync(async (req, res, next) => {
 });
 
 const createRestaurant = catchAsync(async (req, res, next) => {
-  const { name, adress, rating } = req.body;
+  const { name, address, rating } = req.body;
 
   // INSERT INTO ...
   const newRestaurant = await Restaurant.create({
     name,
-    adress,
+    address,
     rating,
   });
 
@@ -69,12 +79,10 @@ const createReviewByRestaurantId = catchAsync(async (req, res, next) => {
 });
 
 const updateReviewByRestaurantId = catchAsync(async (req, res, next) => {
-  const { comment, rating, id } = req.body;
-  const { restaurantId } = req.params;
+  const { comment, rating } = req.body;
+  const { reviewId } = req.params;
 
-  const review = await Review.findOne({ where: { id: id } });
-
-  console.log(restaurantId);
+  const review = await Review.findOne({ where: { id: reviewId } });
 
   await review.update({ comment, rating });
 
@@ -82,6 +90,9 @@ const updateReviewByRestaurantId = catchAsync(async (req, res, next) => {
 });
 
 const deleteReviewByRestaurantId = catchAsync(async (req, res, next) => {
+  const { review } = req;
+  await review.update({ status: 'deleted' });
+
   res.status(200).json({
     status: 'success',
   });

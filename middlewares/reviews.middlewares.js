@@ -5,10 +5,10 @@ const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
 
 const reviewExists = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+  const { reviewId } = req.params;
 
   const review = await Review.findOne({
-    where: { id, status: 'active' },
+    where: { id: reviewId, status: 'active' },
   });
 
   if (!review) {

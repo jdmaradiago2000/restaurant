@@ -33,7 +33,7 @@ const router = express.Router();
 
 router.post('/', createUserValidations, checkValidations, createUser);
 
-router.post('/login', login);
+router.post('/login', loginUserValidations, login);
 
 // Apply protectToken middleware
 router.use(protectToken);
@@ -42,8 +42,8 @@ router.get('/', getAllUsers);
 router.get('/orders', getAllOrders);
 router.get('/orders/:id', getOrderById);
 router.get('/:id', userExists, getUserById);
-router.patch('/:id', userExists, updateUser);
-router.delete('/:id', protectAccountOwner, deleteUser);
+router.patch('/:id', userExists, protectAccountOwner, updateUser);
+router.delete('/:id', userExists, protectAccountOwner, deleteUser);
 
 router.get('/check-token', checkToken);
 

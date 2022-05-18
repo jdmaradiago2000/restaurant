@@ -2,8 +2,15 @@ const express = require('express');
 
 //Middlewares
 const { orderExists } = require('../middlewares/orders.middelwares');
-const { protectToken } = require('../middlewares/users.middlewares');
-const { mealsExists } = require('../middlewares/meals.middlewares');
+const {
+  protectToken,
+  protectAccountOwner,
+} = require('../middlewares/users.middlewares');
+
+const {
+  createOrdersValidations,
+  checkValidations,
+} = require('../middlewares/validations.middlewares');
 
 //Controller
 const {
@@ -17,9 +24,9 @@ const router = express.Router();
 
 router.use(protectToken);
 
-router.post('/', createOrder);
+router.post('/', checkValidations, createOrdersValidations, createOrder);
 router.get('/me', getAllOrders);
-router.patch('/:id', updateOrder);
-router.delete('/:id', deleteOrder);
+router.patch('/:id', orderExists, updateOrder);
+router.delete('/:id', orderExists, deleteOrder);
 
 module.exports = { ordersRouter: router };
