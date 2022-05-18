@@ -12,8 +12,19 @@ const { Meal } = require('../models/meal.model');
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
+const { password } = require('pg/lib/defaults');
 
 dotenv.config({ path: './config.env' });
+
+const getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.findAll({
+    attributes: { exclude: ['password'] },
+  });
+
+  res.status(200).json({
+    users,
+  });
+});
 
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -58,14 +69,19 @@ const login = catchAsync(async (req, res, next) => {
   res.status(200).json({ token, user });
 });
 
+const getUserById = catchAsync(async (req, res, next) => {
+  const { user } = req;
+
+  console.log(user);
+
+  res.status(200).json({
+    user,
+  });
+});
+
 const updateUser = catchAsync(async (req, res, next) => {
   const { user } = req;
-  // const { id } = req.params;
   const { name, email } = req.body;
-
-  // await User.update({ name }, { where: { id } });
-
-  // const user = await User.findOne({ where: { id } });
 
   await user.update({ name, email });
 
@@ -86,14 +102,19 @@ const deleteUser = catchAsync(async (req, res, next) => {
 });
 
 const getAllOrders = catchAsync(async (req, res, next) => {
-  // SELECT * FROM users;
-  const users = await User.findAll({
-    attributes: { exclude: ['password'] },
-    include: [{ model: Order }],
+  const { sessionUser } = req;
+  const orders = await Order.findAll({
+    where: { userId: sessionUser.id, status: 'active' },
+    include: [
+      {
+        model: User,
+        attributes: { exclude: ['password'] },
+      },
+    ],
   });
 
   res.status(200).json({
-    users,
+    orders,
   });
 });
 
@@ -115,8 +136,10 @@ const checkToken = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
+  getAllUsers,
   createUser,
   login,
+  getUserById,
   updateUser,
   deleteUser,
   getAllOrders,

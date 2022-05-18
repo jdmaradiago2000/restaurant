@@ -20,11 +20,11 @@ const Review = db.define('review', {
   restaurantId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-},
-   rating: {
+  },
+  rating: {
     type: DataTypes.INTEGER,
-   }
- 
+    allowNull: false,
+  },
 });
 
 module.exports = { Review };

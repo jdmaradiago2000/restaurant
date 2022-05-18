@@ -69,8 +69,12 @@ const createReviewByRestaurantId = catchAsync(async (req, res, next) => {
 });
 
 const updateReviewByRestaurantId = catchAsync(async (req, res, next) => {
-  const { comment, rating } = req.body;
-  const { review } = req;
+  const { comment, rating, id } = req.body;
+  const { restaurantId } = req.params;
+
+  const review = await Review.findOne({ where: { id: id } });
+
+  console.log(restaurantId);
 
   await review.update({ comment, rating });
 

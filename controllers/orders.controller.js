@@ -1,6 +1,7 @@
 // Models
 const { User } = require('../models/user.model');
 const { Order } = require('../models/order.model');
+const { Meal } = require('../models/meal.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
@@ -9,12 +10,16 @@ const createOrder = catchAsync(async (req, res, next) => {
   const { quantity, mealId } = req.body;
   const { sessionUser } = req;
 
-  //let total = quantity * mealId;
+  const mealPrice = await Meal.findOne({
+    where: { id: mealId },
+  });
+
+  let totalOrder = quantity * mealPrice.price;
 
   const newOrder = await Order.create({
     quantity,
     mealId,
-    //total,
+    totalPrice: totalOrder,
     userId: sessionUser.id,
   });
 
@@ -23,11 +28,9 @@ const createOrder = catchAsync(async (req, res, next) => {
 
 const updateOrder = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const { title, content } = req.body;
-
   const order = await Order.findOne({ where: { id } });
 
-  await order.update({ title, content });
+  await order.update({ status: 'completed' });
 
   res.status(200).json({ status: 'success' });
 });

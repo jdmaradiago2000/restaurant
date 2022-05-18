@@ -14,8 +14,8 @@ const {
 } = require('../controllers/meals.controller');
 
 const router = express.Router();
-router.post('/:restaurantId', createMeal);
 router.get('/', getAllMeals);
+router.post('/:restaurantId', createMeal);
 
 router.use(protectToken);
 

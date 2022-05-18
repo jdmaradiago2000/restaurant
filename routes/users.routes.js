@@ -1,21 +1,27 @@
 const express = require('express');
+const { body } = require('express-validator');
 
 // Middlewares
 const {
   userExists,
   protectToken,
+  protectAdmin,
   protectAccountOwner,
 } = require('../middlewares/users.middlewares');
 
 const {
   createUserValidations,
+  loginUserValidations,
+  createCommentValidations,
   checkValidations,
 } = require('../middlewares/validations.middlewares');
 
 // Controller
 const {
+  getAllUsers,
   createUser,
   login,
+  getUserById,
   updateUser,
   deleteUser,
   getAllOrders,
@@ -31,10 +37,13 @@ router.post('/login', login);
 
 // Apply protectToken middleware
 router.use(protectToken);
-router.patch('/:id', protectAccountOwner, updateUser);
+
+router.get('/', getAllUsers);
+router.get('/orders', getAllOrders);
+router.get('/orders/:id', getOrderById);
+router.get('/:id', userExists, getUserById);
+router.patch('/:id', userExists, updateUser);
 router.delete('/:id', protectAccountOwner, deleteUser);
-router.get('/orders', protectAccountOwner, getAllOrders);
-router.get('/orders/:id', protectAccountOwner, getOrderById);
 
 router.get('/check-token', checkToken);
 

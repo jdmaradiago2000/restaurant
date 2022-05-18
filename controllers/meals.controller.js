@@ -23,7 +23,7 @@ const createMeal = catchAsync(async (req, res, next) => {
 
 const getMealById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const meal = await Meal.findOne({ where: { id, status: 'active' } });
+  const meal = await Meal.findOne({ where: { id } });
 
   res.status(200).json({ meal });
 });
